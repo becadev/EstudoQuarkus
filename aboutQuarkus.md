@@ -54,4 +54,19 @@ Cria um projeto com artefato 'quarkus-personapi' e extensão REST + Hibernate Pa
 ### Pom.xml 
 No arquivo *pom.xml* ficam todas configurações do projeto, extensões e dependencias que foram instaladas
 ```bash
-``
+```
+
+## Comparação geral: Django x Quarkus
+
+| **Django**               | **Quarkus**                                  |
+|--------------------------|-----------------------------------------------|
+| Model                    | Entity (JPA)                                  |
+| Serializer               | Feito automaticamente pelo Jackson            |
+| Views (FBVs/CBVs)        | Resources (REST Controllers)                  |
+| URLs / routes            | `@Path`                                       |
+| Services (se você cria)  | Services com `@ApplicationScoped`             |
+| Migrations               | Flyway ou Liquibase                           |
+| ORM                      | Hibernate ORM (JPA)                           |
+| Middleware               | Interceptors / Filters                        |
+| Validações               | Bean Validation (`@NotNull`, `@Email`, etc.)  |
+
