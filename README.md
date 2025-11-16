@@ -1,7 +1,7 @@
 # Quarkus-personapi
 
 Projeto Quarkus REST API (Person) — instruções para criar e rodar localmente (Linux/Windows) usando PostgreSQL ou H2.
-- [Mais sobre Quarkus e comparação com django](visao/doc-visao.md)
+- [Mais sobre Quarkus e comparação com django](aboutQuarkus.md)
 ## Requisitos
 - Java 17
 - Maven (o projeto inclui wrapper `./mvnw`)
