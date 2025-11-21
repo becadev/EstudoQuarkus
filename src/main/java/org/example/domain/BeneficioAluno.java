@@ -2,16 +2,20 @@ package org.example.domain;
 
 import java.time.LocalDate;
 
-import io.quarkus.hibernate.orm.panache.PanacheEntity; // já gera o id automaticamente
+import org.hibernate.annotations.CreationTimestamp; // já gera o id automaticamente
+
+import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 
+
 @Entity
 public class BeneficioAluno extends PanacheEntity {
     
     public String observacao;
+    @CreationTimestamp // registra automaticamente quando é criado
     public LocalDate data_concessao;
     public Boolean ativo;
 
