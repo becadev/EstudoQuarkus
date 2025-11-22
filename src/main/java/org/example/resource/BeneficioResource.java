@@ -2,8 +2,13 @@ package org.example.resource;
 
 import java.util.List;
 
+import org.example.DTO.BeneficioDTO;
+import org.example.domain.Auxilio;
 import org.example.domain.Beneficio;
+import org.example.mapper.BeneficioMapper;
+import org.example.service.BeneficioService;    
 
+import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
@@ -21,38 +26,44 @@ import jakarta.ws.rs.core.MediaType;
 @Consumes(MediaType.APPLICATION_JSON)
 public class BeneficioResource {
 
+    @Inject
+    BeneficioService beneficioService;
+
     @GET
     public List<Beneficio> listAll() {
-        return Beneficio.listAll();
+        return beneficioService.listarBeneficio();
     }
 
     @GET
     @Path("/{id}")
-    public Beneficio findById(@PathParam("id") Long id) {
-        Beneficio beneficio = Beneficio.findById(id);
+    public BeneficioDTO findById(@PathParam("id") Long id) {
+        Beneficio beneficio = beneficioService.buscarPorId(id);
         if (beneficio == null) {
             throw new NotFoundException("Beneficio não encontrado");
         }
-        return beneficio;
+        return BeneficioMapper.toDTO(beneficio);
     }
 
     @POST
     @Transactional
-    public Beneficio create(Beneficio beneficiorequest) {
+    public BeneficioDTO create(BeneficioDTO beneficiorequest) {
         Beneficio beneficio = new Beneficio();
         beneficio.nome = beneficiorequest.nome;
         beneficio.descricao = beneficiorequest.descricao;
         beneficio.ativo = beneficiorequest.ativo;
+        Auxilio aux = new Auxilio();
+        aux.id = beneficiorequest.auxilioId;    
+        beneficio.auxilio = aux;
 
-        beneficio.persist();
-        return beneficio;
+        beneficioService.salvar(beneficio);
+        return BeneficioMapper.toDTO(beneficio);
     }
 
     @PUT
     @Path("/{id}")
     @Transactional
-    public Beneficio update(@PathParam("id") Long id, Beneficio updated) {
-        Beneficio beneficio = Beneficio.findById(id);
+    public BeneficioDTO update(@PathParam("id") Long id, BeneficioDTO updated) {
+        Beneficio beneficio = beneficioService.buscarPorId(id);
         if (beneficio == null) {
             throw new NotFoundException("Beneficio não encontrado");
         }
@@ -61,14 +72,14 @@ public class BeneficioResource {
         beneficio.descricao = updated.descricao;
         beneficio.ativo = updated.ativo;
 
-        return beneficio;
+        return BeneficioMapper.toDTO(beneficio);
     }
 
     @DELETE
     @Path("/{id}")
     @Transactional
     public void delete(@PathParam("id") Long id) {
-        boolean deleted = Beneficio.deleteById(id);
+        boolean deleted = beneficioService.remover(id);
         if (!deleted) {
             throw new NotFoundException("Beneficio não encontrado");
         }

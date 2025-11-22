@@ -23,7 +23,7 @@ public class BeneficioAluno extends PanacheEntity {
     @JoinColumn(name = "aluno_id") // nome da coluna FK
     public Aluno aluno;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "auxilio_id") // nome da coluna FK
     public Auxilio auxilio;
 

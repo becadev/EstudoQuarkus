@@ -47,19 +47,18 @@ public class BeneficioAlunoResource {
 
     @POST
     @Transactional
-    public BeneficioAlunoDTO create(BeneficioAlunoDTO beneficiorequest) {
-        BeneficioAluno beneficio = BeneficioAlunoMapper.toEntity(beneficiorequest);
-        beneficioAlunoService.salvar(beneficio);
+    public BeneficioAlunoDTO create(BeneficioAlunoDTO request) {
+        BeneficioAluno beneficio = beneficioAlunoService.inserirAlunoBeneficio(request);
         return BeneficioAlunoMapper.toDTO(beneficio);
     }
 
-    @POST
-    @Path("/inserirAluno")
-    @Transactional
-    public BeneficioAlunoRequestDTO inserirAlunoBeneficio(BeneficioAlunoRequestDTO request) {
-        BeneficioAluno beneficio = beneficioAlunoService.inserirAlunoBeneficio(request.alunoId, request.auxilioId);
-        return  BeneficioAlunoRequestMapper.toDTO(beneficio);
-    }
+    // @POST
+    // @Path("/inserirAluno")
+    // @Transactional
+    // public BeneficioAlunoRequestDTO inserirAlunoBeneficio(BeneficioAlunoRequestDTO request) {
+    //     BeneficioAluno beneficio = beneficioAlunoService.inserirAlunoBeneficio(request.alunoId, request.auxilioId);
+    //     return  BeneficioAlunoRequestMapper.toDTO(beneficio);
+    // }
 
     @PUT
     @Path("/{id}")
