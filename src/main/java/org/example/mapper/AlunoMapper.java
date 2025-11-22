@@ -9,6 +9,7 @@ public class AlunoMapper {
         AlunoDTO dto = new AlunoDTO();
         dto.id = aluno.id;
         dto.nome = aluno.nome;
+        dto.email = aluno.email;
         dto.ativo = aluno.ativo;
         return dto;
     }
@@ -16,6 +17,7 @@ public class AlunoMapper {
     public static Aluno toEntity(AlunoDTO dto) {
         Aluno aluno = new Aluno();
         aluno.nome = dto.nome;
+        aluno.email = dto.email;
         aluno.ativo = dto.ativo;
         return aluno;
     }

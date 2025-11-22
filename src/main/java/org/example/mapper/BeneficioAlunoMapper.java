@@ -2,7 +2,7 @@ package org.example.mapper;
 import org.example.DTO.BeneficioAlunoDTO;
 import org.example.domain.BeneficioAluno;
 
-public class BenificioAlunoMapper {
+public class BeneficioAlunoMapper {
      public static BeneficioAlunoDTO toDTO(BeneficioAluno benficioaluno) {
         BeneficioAlunoDTO dto = new BeneficioAlunoDTO();
         dto.id = benficioaluno.id;

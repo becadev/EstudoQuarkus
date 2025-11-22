@@ -1,8 +1,12 @@
 package org.example.resource;
 import java.util.List;
 
+import org.example.DTO.AuxilioDTO;
 import org.example.domain.Auxilio;
+import org.example.mapper.AuxilioMapper;
+import org.example.service.AuxilioService;
 
+import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
@@ -20,38 +24,41 @@ import jakarta.ws.rs.core.MediaType;
 @Consumes(MediaType.APPLICATION_JSON)
 public class AuxilioResource {
 
+    @Inject
+    AuxilioService auxilioService;
+
     @GET
     public List<Auxilio> listAll() {
-        return Auxilio.listAll();
+        return auxilioService.listarAuxilios();
     }
 
     @GET
     @Path("/{id}")
-    public Auxilio findById(@PathParam("id") Long id) {
-        Auxilio auxilio = Auxilio.findById(id);
+    public AuxilioDTO findById(@PathParam("id") Long id) {
+        Auxilio auxilio = auxilioService.buscarPorId(id);
         if (auxilio == null) {
             throw new NotFoundException("Auxilio não encontrado");
         }
-        return auxilio;
+        return AuxilioMapper.toDTO(auxilio);
     }
 
     @POST
     @Transactional
-    public Auxilio create(Auxilio auxiliorequest) {
+    public AuxilioDTO create(AuxilioDTO dto) { // cria um auxilio
         Auxilio auxilio = new Auxilio();
-        auxilio.titulo = auxiliorequest.titulo;
-        auxilio.descricao = auxiliorequest.descricao;
-        auxilio.ativo = auxiliorequest.ativo;
+        auxilio.titulo = dto.titulo;
+        auxilio.descricao = dto.descricao;
+        auxilio.ativo = dto.ativo;
 
-        auxilio.persist();
-        return auxilio;
+        auxilioService.salvar(auxilio);
+        return AuxilioMapper.toDTO(auxilio);
     }
 
     @PUT
     @Path("/{id}")
     @Transactional
-    public Auxilio update(@PathParam("id") Long id, Auxilio updated) {
-        Auxilio auxilio = Auxilio.findById(id);
+    public AuxilioDTO update(@PathParam("id") Long id, AuxilioDTO updated) {
+        Auxilio auxilio = auxilioService.buscarPorId(id);
         if (auxilio == null) {
             throw new NotFoundException("Auxilio não encontrado");
         }
@@ -60,14 +67,14 @@ public class AuxilioResource {
         auxilio.descricao = updated.descricao;
         auxilio.ativo = updated.ativo;
 
-        return auxilio;
+        return AuxilioMapper.toDTO(auxilio);
     }
 
     @DELETE
     @Path("/{id}")
     @Transactional
     public void delete(@PathParam("id") Long id) {
-        boolean deleted = Auxilio.deleteById(id);
+        boolean deleted = auxilioService.remover(id);
         if (!deleted) {
             throw new NotFoundException("Auxilio não encontrado");
         }

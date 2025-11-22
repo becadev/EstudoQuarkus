@@ -2,8 +2,14 @@ package org.example.resource;
 
 import java.util.List;
 
+import org.example.DTO.BeneficioAlunoDTO;
+import org.example.DTO.BeneficioAlunoRequestDTO;
 import org.example.domain.BeneficioAluno;
+import org.example.mapper.BeneficioAlunoMapper;
+import org.example.mapper.BeneficioAlunoRequestMapper;
+import org.example.service.BeneficioAlunoService;
 
+import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
@@ -21,39 +27,45 @@ import jakarta.ws.rs.core.MediaType;
 @Consumes(MediaType.APPLICATION_JSON)
 public class BeneficioAlunoResource {
 
+    @Inject
+    BeneficioAlunoService beneficioAlunoService;
+
     @GET
     public List<BeneficioAluno> listAll() {
-        return BeneficioAluno.listAll();
+        return beneficioAlunoService.listarBeneficiados();
     }
 
     @GET
     @Path("/{id}")
-    public BeneficioAluno findById(@PathParam("id") Long id) {
-        BeneficioAluno beneficioAluno = BeneficioAluno.findById(id);
+    public BeneficioAlunoDTO findById(@PathParam("id") Long id) {
+        BeneficioAluno beneficioAluno = beneficioAlunoService.buscarPorId(id);
         if (beneficioAluno == null) {
             throw new NotFoundException("Vinculo não encontrado");
         }
-        return beneficioAluno;
+        return BeneficioAlunoMapper.toDTO(beneficioAluno);
     }
 
     @POST
     @Transactional
-    public BeneficioAluno create(BeneficioAluno beneficiorequest) {
-        BeneficioAluno beneficio = new BeneficioAluno();
-        beneficio.observacao = beneficiorequest.observacao;
-        beneficio.ativo = beneficiorequest.ativo;
-        beneficio.aluno = beneficiorequest.aluno;
-        beneficio.auxilio = beneficiorequest.auxilio;
+    public BeneficioAlunoDTO create(BeneficioAlunoDTO beneficiorequest) {
+        BeneficioAluno beneficio = BeneficioAlunoMapper.toEntity(beneficiorequest);
+        beneficioAlunoService.salvar(beneficio);
+        return BeneficioAlunoMapper.toDTO(beneficio);
+    }
 
-        beneficio.persist();
-        return beneficio;
+    @POST
+    @Path("/inserirAluno")
+    @Transactional
+    public BeneficioAlunoRequestDTO inserirAlunoBeneficio(BeneficioAlunoRequestDTO request) {
+        BeneficioAluno beneficio = beneficioAlunoService.inserirAlunoBeneficio(request.alunoId, request.auxilioId);
+        return  BeneficioAlunoRequestMapper.toDTO(beneficio);
     }
 
     @PUT
     @Path("/{id}")
     @Transactional
-    public BeneficioAluno update(@PathParam("id") Long id, BeneficioAluno updated) {
-        BeneficioAluno beneficio = BeneficioAluno.findById(id);
+    public BeneficioAlunoDTO update(@PathParam("id") Long id, BeneficioAlunoDTO updated) {
+        BeneficioAluno beneficio = beneficioAlunoService.buscarPorId(id);
         if (beneficio == null) {
             throw new NotFoundException("Vinculo não encontrado");
         }
@@ -61,14 +73,14 @@ public class BeneficioAlunoResource {
         beneficio.observacao = updated.observacao;
         beneficio.ativo = updated.ativo;
 
-        return beneficio;
+        return BeneficioAlunoMapper.toDTO(beneficio);
     }
 
     @DELETE
     @Path("/{id}")
     @Transactional
     public void delete(@PathParam("id") Long id) {
-        boolean deleted = BeneficioAluno.deleteById(id);
+        boolean deleted = beneficioAlunoService.remover(id);
         if (!deleted) {
             throw new NotFoundException("Vinculo não encontrado");
         }
